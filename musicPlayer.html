@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Music Player</title>
+    <link rel="stylesheet" href="/assests/css/musicPlayer.css" />
+    <script
+      src="https://kit.fontawesome.com/f22945cfc4.js"
+      crossorigin="anonymous"
+    ></script>
+    <script defer src="/musicPlayer.js"></script>
+  </head>
+
+  <body>
+    <div class="apps__header">
+      <div class="apps__header-container">
+        <div class="apps__header-control--desc">Now Playing</div>
+        <h2 class="apps__header-desc">Music Player</h2>
+      </div>
+      <div class="cd">
+        <div class="cd__image-item"></div>
+      </div>
+
+      <div class="apps__control">
+        <div class="apps__control-button">
+          <button class="apps__control-button--link">
+            <i class="btn btn-repeat fas fa-repeat"></i>
+          </button>
+          <button class="apps__control-button--link">
+            <i class="btn btn-back fa-solid fa-backward"></i>
+          </button>
+          <button class="apps__control-button--link">
+            <i class="btn btn-play fa-solid fa-play"></i>
+          </button>
+          <button class="apps__control-button--link">
+            <i class="btn btn-forward fa-solid fa-forward"></i>
+          </button>
+          <button class="apps__control-button--link">
+            <i class="btn btn-random fas fa-random"></i>
+          </button>
+        </div>
+        <input
+          type="range"
+          id="progress"
+          class="progress"
+          value="0"
+          step="1"
+          min="0"
+          max="100"
+        />
+        <audio src="" id="audio"></audio>
+      </div>
+    </div>
+
+    <ul class="apps__songs-list"></ul>
+  </body>
+</html>
