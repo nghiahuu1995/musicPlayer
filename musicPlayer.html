@@ -5,55 +5,102 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>Music Player</title>
-    <link rel="stylesheet" href="/assests/css/musicPlayer.css" />
+    <link rel="shortcut icon" href="#" />
+    <link
+      rel="stylesheet"
+      href="/Project/musicPlayer/assests/css/musicPlayer.css"
+    />
+    <link rel="stylesheet" href="/Project/musicPlayer/assests/css/range.css" />
     <script
       src="https://kit.fontawesome.com/f22945cfc4.js"
       crossorigin="anonymous"
     ></script>
-    <script defer src="/musicPlayer.js"></script>
+    <script defer src="/Project/musicPlayer/musicPlayer.js"></script>
   </head>
 
   <body>
-    <div class="apps__header">
-      <div class="apps__header-container">
-        <div class="apps__header-control--desc">Now Playing</div>
-        <h2 class="apps__header-desc">Music Player</h2>
-      </div>
-      <div class="cd">
-        <div class="cd__image-item"></div>
-      </div>
-
-      <div class="apps__control">
-        <div class="apps__control-button">
-          <button class="apps__control-button--link">
-            <i class="btn btn-repeat fas fa-repeat"></i>
-          </button>
-          <button class="apps__control-button--link">
-            <i class="btn btn-back fa-solid fa-backward"></i>
-          </button>
-          <button class="apps__control-button--link">
-            <i class="btn btn-play fa-solid fa-play"></i>
-          </button>
-          <button class="apps__control-button--link">
-            <i class="btn btn-forward fa-solid fa-forward"></i>
-          </button>
-          <button class="apps__control-button--link">
-            <i class="btn btn-random fas fa-random"></i>
-          </button>
+    <div class="player">
+      <div class="apps__header">
+        <div class="apps__header-container">
+          <div class="apps__header-control--desc">Now Playing</div>
+          <h2 class="apps__header-desc">Music Player</h2>
         </div>
-        <input
-          type="range"
-          id="progress"
-          class="progress"
-          value="0"
-          step="1"
-          min="0"
-          max="100"
-        />
-        <audio src="" id="audio"></audio>
-      </div>
-    </div>
+        <div class="cd">
+          <div class="cd__image-item"></div>
+          <div id="image-background" class=""></div>
+        </div>
 
-    <ul class="apps__songs-list"></ul>
+        <div class="apps__control">
+          <div class="apps__control-button">
+            <div class="btn btn-repeat">
+              <i class="fas fa-repeat icon-repeat"></i>
+            </div>
+            <div class="btn btn-back">
+              <i class="fa-solid fa-backward icon-backward"></i>
+            </div>
+            <div class="btn btn-play">
+              <i class="fa-solid fa-play icon-play"></i>
+              <i class="fa-solid fa-pause icon-pause"></i>
+            </div>
+            <div class="btn btn-forward">
+              <i class="fa-solid fa-forward icon-forward"></i>
+            </div>
+            <div class="btn btn-shuffle">
+              <i class="fas fa-random icon-shuffle"></i>
+            </div>
+          </div>
+          <div class="music__progress">
+            <span id="music__current-progress">0:00</span>
+            <input
+              type="range"
+              id="progress"
+              class="progress"
+              value="0"
+              step="1"
+              min="0"
+              max="100"
+            />
+
+            <span id="music__current-duration">1:23</span>
+          </div>
+
+          <div class="volume-control">
+            <input
+              type="range"
+              id="volume"
+              class="volume"
+              value="0"
+              step="5"
+              min="0"
+              max="100"
+            />
+            <input id="volume-input" type="" value="5" />
+          </div>
+          <audio id="audio" src=""></audio>
+        </div>
+      </div>
+
+      <ul class="playlist"></ul>
+      <div class="playlist__modal playlist__modal-active">
+        <div class="modal-header cd">
+          <div class="modal__heading">Song</div>
+          <div class="cd">
+            <div class="cd__image-item"></div>
+            <div id="image-background" class=""></div>
+          </div>
+          <div class="modal__body">
+            <ol class="modal__lists">
+              <li class="modal__list-item"></li>
+              <li class="modal__list-item"></li>
+              <li class="modal__list-item"></li>
+              <li class="modal__list-item"></li>
+            </ol>
+          </div>
+        </div>
+      </div>
+      <span class="playlist__control">
+        <i class="fa-solid fa-list"></i>
+      </span>
+    </div>
   </body>
 </html>
