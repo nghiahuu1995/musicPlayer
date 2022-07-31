@@ -81,21 +81,19 @@
       </div>
 
       <ul class="playlist"></ul>
-      <div class="playlist__modal playlist__modal-active">
-        <div class="modal-header cd">
-          <div class="modal__heading">Song</div>
-          <div class="cd">
-            <div class="cd__image-item"></div>
-            <div id="image-background" class=""></div>
+      <div class="playlist__modal">
+        <div class="modal__header">
+          <div class="modal__cd">
+            <img
+              class="modal__cd-image"
+              src="/Project/musicPlayer/assests/images/suni1.jpeg"
+            />
+            <div id="modal__cd-background" class=""></div>
           </div>
-          <div class="modal__body">
-            <ol class="modal__lists">
-              <li class="modal__list-item"></li>
-              <li class="modal__list-item"></li>
-              <li class="modal__list-item"></li>
-              <li class="modal__list-item"></li>
-            </ol>
-          </div>
+        </div>
+        <!-- <div class="modal__heading">Now playing</div> -->
+        <div class="modal__body">
+          <ul class="modal__fav_song-list"></ul>
         </div>
       </div>
       <span class="playlist__control">

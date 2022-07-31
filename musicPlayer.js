@@ -1,18 +1,24 @@
 const $ = document.querySelector.bind(document);
 const $$ = document.querySelectorAll.bind(document);
+
 const header = $(".apps__header");
 const heading = $(".apps__header-desc");
 const cd = $(".cd");
 const cdImage = $(".cd__image-item");
 const cdBackground = $("#image-background");
 const cdThumbnailImage = $(".cd__image-item");
+
 const playList = $(".playlist");
+const playListAudio = $(".playlist-audio");
 const audio = $("#audio");
 const appControl = $(".apps__control");
 
 const playBtn = $(".btn-play");
 const player = $(".player");
 const progress = $("#progress");
+
+const PLAYER_STORAGE_KEY = "MUSIC_PLAYER";
+
 const volume = $("#volume");
 const volumeInput = $("#volume-input");
 const songTimeline = $("#music__current-progress");
@@ -22,6 +28,9 @@ const repeatBtn = $(".btn-repeat");
 const autoPlayBtn = $(".btn-autoplay");
 const nextBtn = $(".btn-forward");
 const prevBtn = $(".btn-back");
+
+const modalControl = $(".playlist__control");
+
 const songs = [
   {
     name: "Nevada",
@@ -58,8 +67,13 @@ const apps = {
   isPlaying: false,
   isRepeating: false,
   autoPlay: false,
-  isActive: false,
+  isRandom: false,
   playlist: new Set(),
+  config: JSON.parse(localStorage.getItem(PLAYER_STORAGE_KEY)) || {},
+  setConfig: function (key, value) {
+    this.config[key] = value;
+    localStorage.setItem(PLAYER_STORAGE_KEY, JSON.stringify(this.config));
+  },
   songs: [
     {
       name: "Nevada",
@@ -86,25 +100,25 @@ const apps = {
       image: "./assests/images/suni4.jpeg",
     },
     {
-      name: "Nevada",
+      name: "Không sao mà",
       singer: "Vicestones",
       path: "assests/music/vaoha.mp3",
       image: "./assests/images/suni1.jpeg",
     },
     {
-      name: "Summer Time",
+      name: "Em đây rồi",
       singer: "Vicestones",
       path: "./assests/music/vaoha.mp3",
       image: "./assests/images/suni2.jpeg",
     },
     {
-      name: "Monody",
+      name: "Minodo",
       singer: "Vicestones",
       path: "assests/music/milktea.mp3",
       image: "./assests/images/suni3.jpeg",
     },
     {
-      name: "Reality",
+      name: "Realities",
       singer: "Vicestones",
       path: "./assests/music/vaoha.mp3",
       image: "./assests/images/suni4.jpeg",
@@ -116,8 +130,8 @@ const apps = {
       // $(".apps__header-desc").innerHTML = song.name;
 
       return `
-      <li class="song${
-        index === this.currentIndex ? " song-active" : ""
+      <li class="song ${
+        index === this.currentIndex ? "active" : ""
       }" data-index="${index}">
         <img
           src="${song.image}"
@@ -130,13 +144,14 @@ const apps = {
           <a class="songs__singer--link" href="${song.path}"></a>
         </div>
         <div class="songs__moreinfo">
-          <i class="songs__moreinfo-icon fa-solid fa-circle-info"></i>
+          <i class="songs__moreinfo-icon fa-solid fa-plus"></i>
         </div>
       </li>`;
     });
 
     playList.innerHTML = htmls.join("");
   },
+
   defineProperties: function () {
     Object.defineProperty(this, "currentSong", {
       get: function () {
@@ -210,6 +225,7 @@ const apps = {
 
     repeatBtn.onclick = function () {
       _this.isRepeating = !_this.isRepeating;
+      _this.setConfig("isRepeating", _this.isRepeating);
       repeatBtn.classList.toggle("repeat", _this.isRepeating);
     };
     nextBtn.onclick = function () {
@@ -235,9 +251,10 @@ const apps = {
     };
     shuffleBtn.onclick = function () {
       _this.isRandom = !_this.isRandom;
+      _this.setConfig("isRandom", _this.isRandom);
       shuffleBtn.classList.toggle("shuffled", _this.isRandom);
-      _this.shuffleSong();
-      audio.play();
+      // _this.shuffleSong();
+      // audio.play();
     };
     audio.onplay = function () {
       _this.isPlaying = true;
@@ -293,56 +310,86 @@ const apps = {
     playList.onclick = function (e) {
       const songs = $$(".song");
       songs.forEach((song) => {
-        song.classList.remove("song-active");
+        song.classList.remove("active");
       });
       // console.log(songs);
       const songNode = e.target.closest(".song:not(.active)");
 
       if (songNode || e.target.closest(".songs__moreinfo")) {
         if (songNode && !e.target.closest(".songs__moreinfo")) {
-          songNode.classList.add("song-active");
+          songNode.classList.add("active");
           _this.currentIndex = songNode.dataset.index;
 
           _this.loadCurrentSong();
 
           audio.play();
         }
-        // e.target.closest(".song").classList.add("song-active");
 
         if (e.target.closest(".songs__moreinfo")) {
           _this.currentIndex = songNode.dataset.index;
-          songNode.classList.add("song-active");
+          songNode.classList.add("active");
           _this.playlist.add(_this.songs[_this.currentIndex]);
+          _this.renderPlaylist();
         }
       }
-      const playListArray = [..._this.playlist];
-      console.log(playListArray);
     };
-    // const listItems = $$("li");
-    // listItems.forEach((song) => {
-    //   // parseInt(song.getAttribute("data-index")) === this.currentIndex
-    //   //   ? song.classList.add("item-active")
-    //   //   : song.setAttribute("onclick", "click(this)");
 
-    //   song.onclick = function (e) {
-    //     $(".song.song-active").classList.remove("song-active");
+    modalControl.onclick = function () {
+      $(".playlist__modal").classList.toggle("playlist__modal-active");
+    };
+    $(".modal__fav_song-list").onclick = function (e) {
+      const modalSong = e.target.closest(".modal__fav_song");
+      const modalHeaderImg = $(".modal__cd-image");
+      $(".modal__fav_song.active").classList.remove("active");
+      if (modalSong) {
+        modalSong.classList.add("active");
+        _this.loadCurrentSong();
+        modalHeaderImg.src = [..._this.playlist][modalSong.dataset.index].image;
+        _this.currentSong.name = [..._this.playlist][
+          modalSong.dataset.index
+        ].name;
+        _this.currentIndex = modalSong.dataset.index;
+        console.log([..._this.playlist], modalSong.dataset.index);
 
-    //     song.classList.add("song-active");
+        audio.src = [..._this.playlist][modalSong.dataset.index].path;
+        console.log(audio.src);
+        // playListAudio.src = [..._this.playlist].path;
+        audio.play();
+      }
+    };
+  },
+  renderPlaylist: function () {
+    const playListArray = [...this.playlist];
+    // console.log(playListArray);
 
-    //   };
-    // });
-    // console.log(song.getAttribute("data-index"));
-    // if (getIndex === this.currentIndex) {
+    //get songs from playlist
+    const listSong = playListArray.map((song, index) => {
+      // $(".apps__header-desc").innerHTML = song.name;
 
-    // } else {
-    //   song.classList.add("item-active");
+      return `
+      <li class="modal__fav_song${
+        song.name === this.currentSong.name ? " active" : ""
+      }" data-index="${index}">
+              
+              <div class="modal__playlist-song-name">${song.name}</div>
+              <div class="modal__playlist-song-singer">${song.singer}</div>
+              <audio class="playlist-audio" id="fav-song-${index}" src="${
+        song.path
+      }"></audio>
+              <span class="audio-duration">3:00</span>
+            </li>`;
+    });
 
-    // }
+    $(".modal__fav_song-list").innerHTML = listSong.join("");
   },
   loadCurrentSong: function () {
     heading.textContent = this.currentSong.name;
     cdThumbnailImage.style.backgroundImage = `url("${this.currentSong.image}")`;
     audio.src = this.currentSong.path;
+  },
+  loadConfig: function () {
+    this.isRandom = this.config.isRandom;
+    this.isRepeating = this.config.isRepeating;
   },
   nextSong: function () {
     this.currentIndex++;
@@ -365,17 +412,25 @@ const apps = {
     this.loadCurrentSong();
   },
   scrollIntoView: function () {
-    $(".song-active").scrollIntoView({
+    $(".song.active").scrollIntoView({
       behavior: "smooth",
       block: "end",
       inline: "nearest",
     });
   },
   start: function () {
+    this.render();
+    this.renderPlaylist();
+    //load config from local storage
+    this.loadConfig();
+    //add currentsong property
     this.defineProperties();
+    //event handlers button
     this.handleEvents();
     this.loadCurrentSong();
-    this.render();
+
+    repeatBtn.classList.toggle("repeat", this.isRepeating);
+    shuffleBtn.classList.toggle("shuffled", this.isRandom);
   },
 };
 apps.start();
